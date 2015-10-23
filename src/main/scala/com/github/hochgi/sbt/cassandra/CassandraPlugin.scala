@@ -16,6 +16,7 @@ object CassandraPlugin extends Plugin {
 	private[this] val defaultConfigDir = "NO_DIR_SUPPLIED"
 	private[this] val defaultCliInit = "NO_CLI_COMMANDS_SUPPLIED"
 	private[this] val defaultCqlInit = "NO_CQL_COMMANDS_SUPPLIED"
+	//private[this] val defaultTarBall = "GET_FROM_MAVEN"
 
 	val cassandraVersion = SettingKey[String]("cassandra-version")
 	val cassandraConfigDir = SettingKey[String]("cassandra-config-dir")
@@ -33,6 +34,7 @@ object CassandraPlugin extends Plugin {
 	val cleanCassandraAfterStop = SettingKey[Boolean]("stop-cassandra-after-tests")
 	val cassandraPid = TaskKey[String]("cassandra-pid")
 	val stopCassandra = TaskKey[Unit]("stop-cassandra")
+	val cassandraTgz = SettingKey[String]("cassandra-tgz")
 	
 	val cassandraSettings = Seq(
     cassandraHost := "localhost",
@@ -68,13 +70,15 @@ object CassandraPlugin extends Plugin {
 				else oldPort
 			}
 		},
+	  cassandraTgz := "",
 		classpathTypes ~=  (_ + "tar.gz"),
 		libraryDependencies += {
 			"org.apache.cassandra" % "apache-cassandra" % cassandraVersion.value artifacts(Artifact("apache-cassandra", "tar.gz", "tar.gz","bin")) intransitive()
 		},
-		deployCassandra <<= (cassandraVersion, target, dependencyClasspath in Runtime, streams) map {
-			case (ver, targetDir, classpath, streams) => {
-				val cassandraTarGz = Attributed.data(classpath).find(_.getName == s"apache-cassandra-$ver-bin.tar.gz").get
+		deployCassandra <<= (cassandraVersion, target, dependencyClasspath in Runtime, streams, cassandraTgz) map {
+			case (ver, targetDir, classpath, streams, ctgz) => {
+				val cassandraTarGz:File = if(ctgz.nonEmpty) file(ctgz) else Attributed.data(classpath).find(_.getName == s"apache-cassandra-$ver-bin.tar.gz").get
+
 				if (cassandraTarGz == null) sys.error("could not load: cassandra tar.gz file.")
 				streams.log.info(s"cassandraTarGz: ${cassandraTarGz.getAbsolutePath}")
 				Process(Seq("tar","-xzf",cassandraTarGz.getAbsolutePath),targetDir).!

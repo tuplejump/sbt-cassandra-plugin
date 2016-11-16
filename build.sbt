@@ -1,12 +1,12 @@
 sbtPlugin := true
 
-organization := "com.github.hochgi"
+organization := "com.tuplejump.com.github.hochgi"
 
 name := "sbt-cassandra"
 
 description := "SBT plugin to launch and use Cassandra during integration tests"
 
-version := "1.0.4"
+version := "1.1.0"
 
 scalaVersion := "2.10.6"
 
@@ -38,8 +38,8 @@ licenses := Seq("The MIT License (MIT)" -> url("http://opensource.org/licenses/M
 
 pomExtra := (
   <scm>
-    <url>https://github.com/hochgi/sbt-cassandra-plugin.git</url>
-    <connection>scm:git@github.com:hochgi/sbt-cassandra-plugin.git</connection>
+    <url>https://github.com/tuplejump/sbt-cassandra-plugin.git</url>
+    <connection>scm:git@github.com:tuplejump/sbt-cassandra-plugin.git</connection>
   </scm>
   <developers>
     <developer>

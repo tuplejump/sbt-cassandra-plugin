@@ -36,6 +36,8 @@ object CassandraITPlugin extends AutoPlugin {
     lazy val cassandraJavaArgs = SettingKey[Seq[String]]("cassandra-java-args",
       "Optional. Java arguments to be passed to Cassandra")
 
+    lazy val forceCassandraDownload = SettingKey[Boolean]("force-cassandra-download",
+      "Optional. Defaults to true")
   }
 
   private val PIDFileName = "cass.pid"
@@ -43,13 +45,16 @@ object CassandraITPlugin extends AutoPlugin {
   def deployCassandra(tarFile: String,
                       casVersion: String,
                       targetDir: File,
-                      logger: Logger): File = {
+                      logger: Logger,
+                      forceCassandraDownload: Boolean): File = {
     val cassandraTarGz: File = if (tarFile.nonEmpty) {
       file(tarFile)
     } else if (casVersion.nonEmpty) {
       val file: File = new File(targetDir, s"apache-cassandra-$casVersion-bin.tar.gz")
-      val source = s"http://archive.apache.org/dist/cassandra/$casVersion/apache-cassandra-$casVersion-bin.tar.gz"
-      IO.download(url(source), file)
+      if (!file.exists || forceCassandraDownload) {
+        val source = s"http://archive.apache.org/dist/cassandra/$casVersion/apache-cassandra-$casVersion-bin.tar.gz"
+        IO.download(url(source), file)
+      }
       file
     } else {
       sys.error("Specify Cassandra version or path to Cassandra tar.gz file")
@@ -199,7 +204,8 @@ object CassandraITPlugin extends AutoPlugin {
     cleanCassandraAfterStop := true,
     cassandraStartDeadline := 20,
     configMappings := Nil,
-    cassandraJavaArgs := Nil
+    cassandraJavaArgs := Nil,
+    forceCassandraDownload := true
   )
 
   override def projectSettings: Seq[_root_.sbt.Def.Setting[_]] = super.projectSettings ++
@@ -211,7 +217,7 @@ object CassandraITPlugin extends AutoPlugin {
       val logger = streams.value.log
 
       val cassHome = deployCassandra(cassandraTgz.value.trim,
-        cassandraVersion.value.trim, targetDir, logger)
+        cassandraVersion.value.trim, targetDir, logger, forceCassandraDownload.value)
 
       val confDir: String = {
         if (cassandraConfigDir.value.trim.isEmpty) {

@@ -8,12 +8,12 @@ Note: The plugin does not work on WindowsOS
 Add the following to your `project/plugins.sbt` file:
 
 ```scala
-addSbtPlugin("com.tuplejump.com.github.hochgi" % "sbt-cassandra"   % "1.0.4")
+addSbtPlugin("com.tuplejump.com.github.hochgi" % "sbt-cassandra"   % "1.1.0")
 ```
 
 ## Usage ##
 ### Basic: ###
-In `build.sbt`, enable the plugin for desired project and specify the version of cassandra against which tests are to be run, 
+In `build.sbt`, enable the plugin for desired project and specify the version of cassandra against which tests are to be run,
 
 ```scala
 lazy val root = (project in file("."))
@@ -49,6 +49,10 @@ the plugin downloads cassandra tar from [Apache Cassandra Archives](http://archi
 ```scala
 cassandraTgz := "resources/custom-cassandra.tgz"
 ```
+to prevent downloading cassandra tar file if the file already exists
+```scala
+forceCassandraDowload := false
+```
 to override cassandra configuration, e.g:
 ```scala
 configMappings +=  "auto_snapshot" -> true
@@ -70,9 +74,8 @@ The `configMappings` setting should be used to change host, port and cqlPort. Th
 * host - `listen_address`
 * port - `rpc_port`
 * cqlPort - `native_transport_port`
-        
+
 to pass java args to cassandra,
 ```scala
 cassandraJavaArgs := Seq("-Xmx1G")
 ```
-        

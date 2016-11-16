@@ -6,9 +6,9 @@ name := "sbt-cassandra"
 
 description := "SBT plugin to launch and use Cassandra during integration tests"
 
-version := "1.0.4"
+version := "1.1.0"
 
-scalaVersion := "2.10.4"
+scalaVersion := "2.10.6"
 
 libraryDependencies ++= Seq("org.apache.thrift" % "libthrift" % "0.9.2" exclude("commons-logging","commons-logging"),
                             "org.slf4j" % "slf4j-api" % "1.7.12",

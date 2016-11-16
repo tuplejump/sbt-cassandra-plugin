@@ -49,9 +49,9 @@ the plugin downloads cassandra tar from [Apache Cassandra Archives](http://archi
 ```scala
 cassandraTgz := "resources/custom-cassandra.tgz"
 ```
-to prevent downloading cassandra tar file if the file already exists
+to prevent downloading cassandra tar file if the file already exists. Parameter is ignored if custom file is specified in `cassandraTgz`
 ```scala
-forceCassandraDowload := false
+forceCassandraDownload := false
 ```
 to override cassandra configuration, e.g:
 ```scala
